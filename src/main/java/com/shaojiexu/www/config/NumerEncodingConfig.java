@@ -21,55 +21,93 @@ import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @Component
 public class NumerEncodingConfig {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(NumerEncodingConfig.class);
 
-	
-	public static Map<Integer,List<Character>> NumberAlpahbetMap = new HashMap<>();
+	public static Map<Integer, List<Character>> numberAlpahbetMap = new HashMap<>();
+
+	public static List<String> dictionary = new ArrayList<>();
 
 	@Value("${number.alphabet.mapping}")
-	private String mappingFile;
-	
+	private String mappingFilePath;
+
+	@Value("${alphabet.dictionary}")
+	private String dictionaryFilePath;
+
 	private static final String PIPE_DELIMITER = "\\|";
-	
+
 	private static final String WHITE_SPACE_DELIMITER = "\\s+";
-	
-	
+
 	@PostConstruct
-	private void init(){
+	private void init() {
+		this.loadMappingFile();
+		this.loadDictionary();
+	}
+
+	/**
+	 * load the dictionary into memory from the dictionary file where the path is configured in the property file
+	 */
+	private void loadDictionary() {
+		
+		logger.info("Start loading the dictionary file.");
+		
+		try {
+			FileInputStream fis = new FileInputStream(dictionaryFilePath);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			String line = null;
+
+			while ((line = br.readLine()) != null) {
+				dictionary.add(line.trim());
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		logger.info("End loading the dictionary file.");
+	}
+
+	
+	/**
+	 * load the mapping into memory from the file which the path is configured in the property file
+	 */
+	private void loadMappingFile() {
+
 		logger.info("Start loading the mapping file.");
 		try {
-			
-			FileInputStream fis = new FileInputStream(mappingFile);
+
+			FileInputStream fis = new FileInputStream(mappingFilePath);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			
+
 			String line = null;
-			int numberOfLines = NumberEncodingUtil.countLines(new File(mappingFile));
-						
-			for (int i = 0; (line = br.readLine()) != null && i < numberOfLines-1; i++) {
+			int numberOfLines = NumberEncodingUtil.countLines(new File(
+					mappingFilePath));
+
+			for (int i = 0; (line = br.readLine()) != null && i < numberOfLines - 1; i++) {
 				// each block of a line between two pipes such as "J N Q"
 				String[] blocks = line.split(PIPE_DELIMITER);
-				for(int j = 0; j < blocks.length; j++) {
+				for (int j = 0; j < blocks.length; j++) {
 					List<Character> chars = new ArrayList<>();
-					for(String block : blocks[j].split(WHITE_SPACE_DELIMITER)) {
-						if(block.length() >= 1)
+					for (String block : blocks[j].split(WHITE_SPACE_DELIMITER)) {
+						if (block.length() >= 1)
 							chars.add(block.charAt(0));
 					}
-					
-					if(NumberAlpahbetMap.get(j) != null) {
-						chars.addAll(NumberAlpahbetMap.get(j));
+
+					if (numberAlpahbetMap.get(j) != null) {
+						chars.addAll(numberAlpahbetMap.get(j));
 					}
-					NumberAlpahbetMap.put(j, chars);
+					numberAlpahbetMap.put(j, chars);
 				}
 			}
-		 
+
 			br.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		logger.info("End loading the mapping file.");
+
 	}
-	
+
 }

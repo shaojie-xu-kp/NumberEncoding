@@ -20,9 +20,15 @@ public class NumerEncodingConfigTest {
 	
 	@Test
 	public void mappingFileLoadTest(){
-		for(Map.Entry<Integer,List<Character>> entry : NumerEncodingConfig.NumberAlpahbetMap.entrySet()) {
+		
+		for(Map.Entry<Integer,List<Character>> entry : NumerEncodingConfig.numberAlpahbetMap.entrySet()) {
 			System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
+		
+		for(String word : NumerEncodingConfig.dictionary) {
+			System.out.println(word);
+		}
+		
 	}
 
 }
