@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NumerEncodingApplication {
+public class NumberEncodingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NumerEncodingApplication.class, args);
+        SpringApplication.run(NumberEncodingApplication.class, args);
     }
 }
