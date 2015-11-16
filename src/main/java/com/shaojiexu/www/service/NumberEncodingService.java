@@ -1,7 +1,9 @@
 package com.shaojiexu.www.service;
 
+import java.util.List;
+
 public interface NumberEncodingService {
 	
-	public abstract String lookUp(String number);
+	public abstract List<String> lookUp(char digit);
 
 }

@@ -36,9 +36,9 @@ public class NumberEncodingUtil {
 	 * @param number
 	 * 		  the input number string which might contain slash and dash 
 	 * @return
-	 * 		  return a number string which contains only digits
+	 * 		  return a Long which contains only digits
 	 */
-	public static String cleanNumberString(String number) {
+	public static String numberString2Number(String number) {
 		
 		if(number == null) 
 			throw new IllegalArgumentException("input number string should not be null");

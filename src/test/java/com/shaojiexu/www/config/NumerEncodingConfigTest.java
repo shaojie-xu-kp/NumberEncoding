@@ -45,8 +45,8 @@ public class NumerEncodingConfigTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testNumberStringClean(){
-		assertEquals(NumberEncodingUtil.cleanNumberString("0721/608-4067"),"07216084067");
-		NumberEncodingUtil.cleanNumberString(null);
+		assertEquals(NumberEncodingUtil.numberString2Number("0721/608-4067"),"07216084067");
+		NumberEncodingUtil.numberString2Number(null);
 	}
 
 }
