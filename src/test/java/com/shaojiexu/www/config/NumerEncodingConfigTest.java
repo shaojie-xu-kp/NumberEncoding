@@ -1,9 +1,9 @@
 package com.shaojiexu.www.config;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.shaojiexu.www.NumberEncodingApplication;
+import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = NumberEncodingApplication.class)
@@ -40,6 +41,12 @@ public class NumerEncodingConfigTest {
 		assertEquals("5624-82".contains(ConfigurationConstant.DASH), true);
 		assertEquals("10/783".indexOf(ConfigurationConstant.SLASH),2);
 
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testNumberStringClean(){
+		assertEquals(NumberEncodingUtil.cleanNumberString("0721/608-4067"),"07216084067");
+		NumberEncodingUtil.cleanNumberString(null);
 	}
 
 }

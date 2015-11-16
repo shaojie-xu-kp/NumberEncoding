@@ -12,5 +12,7 @@ public interface ConfigurationConstant {
 	
 	public static final String SLASH = "/";
 	
+	public static final String EMPTY_SPACE = "";
+	
 
 }
