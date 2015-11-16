@@ -1,5 +1,8 @@
 package com.shaojiexu.www.service;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +27,12 @@ public class NumberEncodingServiceTest {
 		for(Character digit: digits){
 			System.out.println(digit + " : "+this.encodingService.lookUp(digit));
 		}
+	}
+	
+	@Test
+	public void testEncoding(){
+		
+		List<String> encodings = this.encodingService.encode(NumberEncodingUtil.numberString2Number("4824"),0,Collections.emptyList());
+		System.out.println(encodings);
 	}
 }

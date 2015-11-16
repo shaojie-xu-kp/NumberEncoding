@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface NumberEncodingService {
 	
-	public abstract List<String> lookUp(char digit);
+	public List<String> lookUp(char digit);
+	
+	public List<String> encode(String number, int position, List<String> encodings);
 
 }
