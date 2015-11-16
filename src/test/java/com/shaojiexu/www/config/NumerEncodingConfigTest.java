@@ -25,8 +25,8 @@ public class NumerEncodingConfigTest {
 			System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 		
-		for(String word : NumerEncodingConfig.dictionary) {
-			System.out.println(word);
+		for(Map.Entry<Character, List<String>> entry : NumerEncodingConfig.dictionary.entrySet()) {
+			System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 		
 	}

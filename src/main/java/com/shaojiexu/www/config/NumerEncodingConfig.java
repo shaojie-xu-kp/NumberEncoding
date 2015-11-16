@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class NumerEncodingConfig {
 
 	public static Map<Integer, List<Character>> numberAlpahbetMap = new HashMap<>();
 
-	public static List<String> dictionary = new ArrayList<>();
+	public static Map<Character, List<String>> dictionary = new HashMap<>();
 
 	@Value("${number.alphabet.mapping}")
 	private String mappingFilePath;
@@ -57,7 +58,14 @@ public class NumerEncodingConfig {
 			String line = null;
 
 			while ((line = br.readLine()) != null) {
-				dictionary.add(line.trim());
+				if(dictionary.containsKey(line.charAt(0))){
+					List<String> words = new ArrayList<>();
+					words.addAll(dictionary.get(line.charAt(0)));
+					words.add(line);
+					dictionary.put(line.charAt(0), words);
+				}else{
+					dictionary.put(line.charAt(0), Arrays.asList(line));
+				}
 			}
 			br.close();
 		} catch (IOException e) {
