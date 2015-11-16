@@ -3,6 +3,8 @@ package com.shaojiexu.www.config;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +18,28 @@ import com.shaojiexu.www.NumberEncodingApplication;
 public class NumerEncodingConfigTest {
 	
 	@Autowired
-	NumerEncodingConfig config;
+	NumerEncodingInitializer config;
 	
 	@Test
 	public void mappingFileLoadTest(){
 		
-		for(Map.Entry<Integer,List<Character>> entry : NumerEncodingConfig.numberAlpahbetMap.entrySet()) {
+		for(Map.Entry<Integer,List<Character>> entry : NumerEncodingInitializer.numberAlpahbetMap.entrySet()) {
 			System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 		
-		for(Map.Entry<Character, List<String>> entry : NumerEncodingConfig.dictionary.entrySet()) {
-			System.out.println(entry.getKey() + ":" + entry.getValue());
+		for(Map.Entry<Character, List<String>> entry : NumerEncodingInitializer.dictionary.entrySet()) {
+					System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 		
+	}
+	
+	@Test
+	public void testSpecialCharMatch(){
+		
+		assertEquals("bo\"s".contains(ConfigurationConstant.DOUBLE_QUOTE), true);
+		assertEquals("5624-82".contains(ConfigurationConstant.DASH), true);
+		assertEquals("10/783".indexOf(ConfigurationConstant.SLASH),2);
+
 	}
 
 }

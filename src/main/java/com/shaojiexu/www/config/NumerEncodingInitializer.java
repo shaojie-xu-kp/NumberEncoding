@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
 import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @Component
-public class NumerEncodingConfig {
+public class NumerEncodingInitializer {
 
-	private static final Logger logger = LoggerFactory.getLogger(NumerEncodingConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(NumerEncodingInitializer.class);
 
 	public static Map<Integer, List<Character>> numberAlpahbetMap = new HashMap<>();
 
@@ -34,10 +34,6 @@ public class NumerEncodingConfig {
 
 	@Value("${alphabet.dictionary}")
 	private String dictionaryFilePath;
-
-	private static final String PIPE_DELIMITER = "\\|";
-
-	private static final String WHITE_SPACE_DELIMITER = "\\s+";
 
 	@PostConstruct
 	private void init() {
@@ -93,10 +89,10 @@ public class NumerEncodingConfig {
 
 			for (int i = 0; (line = br.readLine()) != null && i < numberOfLines - 1; i++) {
 				// each block of a line between two pipes such as "J N Q"
-				String[] blocks = line.split(PIPE_DELIMITER);
+				String[] blocks = line.split(ConfigurationConstant.PIPE_DELIMITER);
 				for (int j = 0; j < blocks.length; j++) {
 					List<Character> chars = new ArrayList<>();
-					for (String block : blocks[j].split(WHITE_SPACE_DELIMITER)) {
+					for (String block : blocks[j].split(ConfigurationConstant.WHITE_SPACE_DELIMITER)) {
 						if (block.length() >= 1)
 							chars.add(block.charAt(0));
 					}
