@@ -1,20 +1,23 @@
 package com.shaojiexu.www.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.shaojiexu.www.config.NumerEncodingInitializer;
+import com.shaojiexu.www.model.NumberObject;
 import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @Service
 public class NumberEncodingServiceImplt implements NumberEncodingService {
+	
+
 
 	@Override
 	public List<String> lookUp(char digit) {
@@ -71,33 +74,31 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 
 	}
 
-	/**
-	 * categorize the encodings by length
-	 * 
-	 * @param encodings
-	 * @return
-	 * 
-	 */
-	private Map<Integer, List<String>> categorizeEncodings(List<String> encodings, int length) {
-
-		Map<Integer, List<String>> categorizedEncodings = new HashMap<>();
-
-		for (String enc : encodings) {
-
-			if (enc.length() > length) {
-				continue;
-			}
-
-			if (categorizedEncodings.containsKey(enc.length())) {
-				List<String> encs = new ArrayList<>();
-				encs.addAll(categorizedEncodings.get(enc.length()));
-				encs.add(enc);
-				categorizedEncodings.put(enc.length(), encs);
-			} else {
-				categorizedEncodings.put(enc.length(), Arrays.asList(enc));
-			}
+	
+	private List<List<String>> searchEncodings(String number, int startAt, Map<String, List<String>> wordMap) {
+		  LinkedList<List<String>> result = new LinkedList<>();
+		  if(startAt == number.length()) {
+		    result.add(new LinkedList<String>());
+		    return result;
+		  }
+		  for(int endAt = startAt + 1; endAt <= number.length(); endAt++) {
+		    List<String> words = wordMap.get(number.substring(startAt, endAt));
+		    if(words != null) {
+		      List<List<String>> encodings = searchEncodings(number, endAt, wordMap);
+		      for(String word: words) {
+		        for(List<String> encoding: encodings) {
+		          List<String> enc = new LinkedList<>(encoding);
+		          enc.add(0, word);
+		          result.add(enc);
+		        }
+		      }
+		    }
+		  }
+		  return result;
 		}
-		return categorizedEncodings;
+	
+	public List<List<String>> searchEncodings(NumberObject number) {
+		return searchEncodings(number.getNumber(), 0, number.getWordMap());
 	}
 
 }
