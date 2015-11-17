@@ -75,16 +75,16 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	}
 
 	
-	private List<List<String>> searchEncodings(String number, int startAt, Map<String, List<String>> wordMap) {
+	private List<List<String>> searchEncodings(String number, int startAt) {
 		  LinkedList<List<String>> result = new LinkedList<>();
 		  if(startAt == number.length()) {
 		    result.add(new LinkedList<String>());
 		    return result;
 		  }
 		  for(int endAt = startAt + 1; endAt <= number.length(); endAt++) {
-		    List<String> words = wordMap.get(number.substring(startAt, endAt));
+		    List<String> words = this.encodeAsWhole(number.substring(startAt, endAt));
 		    if(words != null) {
-		      List<List<String>> encodings = searchEncodings(number, endAt, wordMap);
+		      List<List<String>> encodings = searchEncodings(number, endAt);
 		      for(String word: words) {
 		        for(List<String> encoding: encodings) {
 		          List<String> enc = new LinkedList<>(encoding);
@@ -98,7 +98,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		}
 	
 	public List<List<String>> searchEncodings(NumberObject number) {
-		return searchEncodings(number.getNumber(), 0, number.getWordMap());
+		return searchEncodings(NumberEncodingUtil.numberString2Number(number.getNumber()), 0);
 	}
 
 }
