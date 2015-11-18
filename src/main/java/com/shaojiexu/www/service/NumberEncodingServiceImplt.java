@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +55,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	}
 
 	private List<String> encodeAsWhole(String number) {
-		logger.info("Entering encodeAsWhole(String number) with number : " + number);
-		List<String> encodings = new ArrayList<>();
+		
 		char[] digits = number.toCharArray();
 		List<String> words = this.lookUp(digits[0]);
 		Map<String,String> wordsMap = new HashMap<String, String>();
@@ -62,29 +63,33 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		while(itr.hasNext()) {
 			String word = itr.next();
 			String cleanWord = NumberEncodingUtil.cleanDashAndDoubleQuote(word);
-			if(cleanWord.length() != number.length()) {
+			if(cleanWord.length() != digits.length) {
 				itr.remove();
 			}else{
 				wordsMap.put(cleanWord, word);
 			}
 		}
 		
-		if (words != null) {
-			Object[][] arrs = new Object[number.length()][];
-			for (int i=0; i < number.length(); i++) {
-				List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digits[i]));
-				arrs[i] = elements.toArray();
+		Set<String> ws = new CopyOnWriteArraySet<>();
+		if (wordsMap.keySet() != null) {
+			ws.addAll(wordsMap.keySet());
+			for(String word : ws) {
+				for(int i = 1; i < word.length(); i++) {
+					List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digits[i]));
+					if(!elements.contains(word.charAt(i))) {
+						ws.remove(word);
+					}
+				}
 			}
-			List<String> combos = new ArrayList<>();
-			NumberEncodingUtil.recursivePermutation(combos, arrs, 0, "");
-			
-			wordsMap.keySet().retainAll(combos);
-			encodings.addAll(wordsMap.values());
-
 		}
-		logger.info("Exsiting encodeAsWhole(String number) with number : " + number);
+		
+		List<String> encodings = new ArrayList<>();
+		
+		for(String encodingKey : ws) {
+			encodings.add(wordsMap.get(encodingKey));
+		}
+		
 		return encodings;
-
 	}
 	
 
