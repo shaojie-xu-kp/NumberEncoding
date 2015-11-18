@@ -73,7 +73,8 @@ public class NumberEncodingUtil {
 			throw new IllegalArgumentException("input word string should not be null");
 
 		return word.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
-				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_PLACEHOLDER);
+				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_PLACEHOLDER)
+				   .replace(ConfigurationConstant.EMPTY_SPACE, ConfigurationConstant.EMPTY_PLACEHOLDER);
 		
 	}
 

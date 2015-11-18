@@ -1,6 +1,10 @@
 package com.shaojiexu.www.service;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,9 +33,10 @@ public class NumberEncodingServiceTest {
 	
 	@Test
 	public void testEncodingSearch(){
-		NumberObject numberObject = new NumberObject("4824");
+		NumberObject numberObject = new NumberObject("10/783--5");
 		this.encodingService.searchEncodings(numberObject);
-		System.out.println(numberObject);
+		List<String> encodingsExpected = Arrays.asList("je Bo\" da", "je bo\"s 5", "neu o\"d 5");
+		assertThat(numberObject.getEncodings(), is(encodingsExpected));
 	}
 	
 }

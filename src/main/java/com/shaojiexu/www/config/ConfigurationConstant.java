@@ -16,5 +16,7 @@ public interface ConfigurationConstant {
 	
 	public static final String EMPTY_SPACE = " ";
 	
+	public static final String NUMBER_MATCHE_REGEX = ".*\\d+.*";
+	
 
 }

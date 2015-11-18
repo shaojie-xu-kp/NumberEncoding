@@ -23,7 +23,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NumberEncodingServiceImplt.class);
 
-
 	@Override
 	public List<String> lookUp(char digit) {
 
@@ -38,7 +37,21 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		return words;
 	}
 
+	@Override
+	public void searchEncodings(NumberObject number) {
+		List<List<String>> encodings = searchEncodings(NumberEncodingUtil.numberString2Number(number.getNumber()), 0, true);
+		this.postProcessing(number, encodings);
+	}
 	
+	@Override
+	public List<String> encodeAsWhole(String number, boolean singleDigitPermited) {
+		if(singleDigitPermited && number.length() == 1) {
+			return Arrays.asList(number);
+		}else{
+			return this.encodeAsWhole(number);
+		}
+	}
+
 	private List<String> encodeAsWhole(String number) {
 
 		List<String> encodings = new ArrayList<>();
@@ -79,15 +92,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 
 	}
 	
-	
-	@Override
-	public List<String> encodeAsWhole(String number, boolean singleDigitPermited) {
-		if(singleDigitPermited && number.length() == 1) {
-			return Arrays.asList(number);
-		}else{
-			return this.encodeAsWhole(number);
-		}
-	}
 
 	private List<List<String>> searchEncodings(String number, int startAt, boolean singleDigitPermited) {
 		  List<List<String>> result = new LinkedList<>();
@@ -117,11 +121,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		  }
 		  return result;
 		}
-	
-	public void searchEncodings(NumberObject number) {
-		List<List<String>> encodings = searchEncodings(NumberEncodingUtil.numberString2Number(number.getNumber()), 0, true);
-		this.postProcessing(number, encodings);
-	}
 
 
 	private void postProcessing(NumberObject numberObject, List<List<String>> encodings) {
@@ -130,14 +129,43 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 			logger.info(numberObject.getNumber() + " has no encoding.");
 		}
 		
+		List<String> allEncodings = new ArrayList<>();
+		List<String> badEncodings = new ArrayList<>();
+		
 		for(List<String> strs : encodings) {
 			StringBuffer sbf = new StringBuffer();
 			for(int i = 0; i < strs.size(); i++) {
 				sbf.append(strs.get(i)).append(ConfigurationConstant.EMPTY_SPACE);
 			}
-			numberObject.addEncoding(sbf.toString().trim());
-			logger.info(String.format("%s: %s", numberObject.getNumber(), sbf.toString().trim()));
+			allEncodings.add(sbf.toString().trim());
 		}
+		
+		if(allEncodings.size() > 1) {
+			for(String str : allEncodings) {
+				String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+				search: {
+				if(simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
+					for(int i = 0; i < simpleStr.length()-1; i++) {
+						if(Character.isDigit(simpleStr.charAt(i))) {
+							for(String st : allEncodings) {
+								if(!Character.isDigit(st.charAt(i)) && !badEncodings.contains(st)) {
+									badEncodings.add(str);
+									break search;
+								}
+							}
+						}
+					}
+				}
+			  }
+			}
+		}
+		
+		for(String badEncoding: badEncodings) {
+			allEncodings.remove(badEncoding);
+		}
+		
+		numberObject.setEncodings(allEncodings);
+		
 	}
 
 }
