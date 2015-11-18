@@ -1,5 +1,7 @@
 package com.shaojiexu.www.service;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.shaojiexu.www.NumberEncodingApplication;
 import com.shaojiexu.www.model.NumberObject;
+import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = NumberEncodingApplication.class)
@@ -18,23 +21,17 @@ public class NumberEncodingServiceTest {
 		
 	@Test
 	public void testEncoding(){
-		
-//		List<String> encodings = new ArrayList<>();
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("56-2")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("4824")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("482")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("10/7")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("10")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("783")));
-//		System.out.println(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("78")));
-		
+		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("56-2"),false).contains("mir"));
+		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("4824"),false).contains("Torf"));
+		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("482"),false).contains("Tor"));
+		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("10/7"),false).contains("neu"));
 	}
 	
 	@Test
 	public void testEncodingSearch(){
-		NumberObject numberObject = new NumberObject("10/783--5");
-		System.out.println(this.encodingService.searchEncodings(numberObject));
+		NumberObject numberObject = new NumberObject("4824");
+		this.encodingService.searchEncodings(numberObject);
+		System.out.println(numberObject);
 	}
 	
-
 }

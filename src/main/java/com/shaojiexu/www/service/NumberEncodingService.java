@@ -8,9 +8,8 @@ public interface NumberEncodingService {
 	
 	public List<String> lookUp(char digit);
 	
-	public List<String> encodeAsWhole(String number);
+	public List<String> encodeAsWhole(String number, boolean singleDigitEncodePermit);
 	
-	public List<List<String>> searchEncodings(NumberObject number);
+	public void searchEncodings(NumberObject number);
 	
-
 }

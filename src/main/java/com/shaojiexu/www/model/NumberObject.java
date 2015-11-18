@@ -1,5 +1,6 @@
 package com.shaojiexu.www.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NumberObject {
@@ -27,7 +28,16 @@ public class NumberObject {
 	public void setEncodings(List<String> encodings) {
 		this.encodings = encodings;
 	}
-
 	
+	public void addEncoding(String encoding){
+		if(encodings == null) {
+			encodings = new ArrayList<>();
+		}
+		encodings.add(encoding);
+	}
+
+	public String toString(){
+		return String.format("%s: %s", this.number, this.encodings);
+	}
 
 }

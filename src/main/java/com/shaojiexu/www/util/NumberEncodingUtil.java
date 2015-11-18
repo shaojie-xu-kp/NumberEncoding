@@ -44,8 +44,8 @@ public class NumberEncodingUtil {
 		if(number == null) 
 			throw new IllegalArgumentException("input number string should not be null");
 		
-		return number.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_SPACE)
-					 .replace(ConfigurationConstant.SLASH, ConfigurationConstant.EMPTY_SPACE);
+		return number.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
+					 .replace(ConfigurationConstant.SLASH, ConfigurationConstant.EMPTY_PLACEHOLDER);
 	}
 	
 	/**
@@ -72,8 +72,8 @@ public class NumberEncodingUtil {
 		if(word == null) 
 			throw new IllegalArgumentException("input word string should not be null");
 
-		return word.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_SPACE)
-				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_SPACE);
+		return word.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
+				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_PLACEHOLDER);
 		
 	}
 
