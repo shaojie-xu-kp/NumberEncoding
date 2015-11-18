@@ -53,7 +53,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	}
 
 	private List<String> encodeAsWhole(String number) {
-
+		logger.info("Entering encodeAsWhole(String number) with number : " + number);
 		List<String> encodings = new ArrayList<>();
 		char[] digits = number.toCharArray();
 		List<String> words = this.lookUp(digits[0]);
@@ -70,24 +70,19 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		}
 		
 		if (words != null) {
-			for(String word : wordsMap.keySet()) {
-				Object[][] arrs = new Object[number.length()][];
-				for (int i=0; i < number.length(); i++) {
-					List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digits[i]));
-					arrs[i] = elements.toArray();
-				}
-				List<String> combos = new ArrayList<>();
-				NumberEncodingUtil.recursivePermutation(combos, arrs, 0, "");
-				for (String combi : combos) {
-						if (combi.equals(word)) {
-							encodings.add(wordsMap.get(word));
-						}
-				}
-
+			Object[][] arrs = new Object[number.length()][];
+			for (int i=0; i < number.length(); i++) {
+				List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digits[i]));
+				arrs[i] = elements.toArray();
 			}
+			List<String> combos = new ArrayList<>();
+			NumberEncodingUtil.recursivePermutation(combos, arrs, 0, "");
+			
+			wordsMap.keySet().retainAll(combos);
+			encodings.addAll(wordsMap.values());
 
 		}
-		
+		logger.info("Exsiting encodeAsWhole(String number) with number : " + number);
 		return encodings;
 
 	}

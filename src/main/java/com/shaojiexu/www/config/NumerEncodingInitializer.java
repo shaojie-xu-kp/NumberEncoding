@@ -46,7 +46,7 @@ public class NumerEncodingInitializer {
 	 */
 	private void loadDictionary() {
 		
-		logger.info("Start loading the dictionary file.");
+		logger.info("Start loading the dictionary file : " + dictionaryFilePath);
 		
 		try {
 			FileInputStream fis = new FileInputStream(dictionaryFilePath);
