@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.shaojiexu.www.config.ConfigurationConstant;
@@ -23,7 +21,7 @@ import com.shaojiexu.www.util.NumberEncodingUtil;
 @Service
 public class NumberEncodingServiceImplt implements NumberEncodingService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(NumberEncodingServiceImplt.class);
+//	private static final Logger logger = LoggerFactory.getLogger(NumberEncodingServiceImplt.class);
 
 	@Override
 	public List<String> lookUp(char digit) {
@@ -123,49 +121,48 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		}
 
 
-	private void postProcessing(NumberObject numberObject, List<List<String>> encodings) {
-		
-		if(encodings == null || encodings.size() == 0) {
-			logger.info(numberObject.getNumber() + " has no encoding.");
-		}
-		
-		List<String> allEncodings = new ArrayList<>();
-		List<String> badEncodings = new ArrayList<>();
-		
-		for(List<String> strs : encodings) {
-			StringBuffer sbf = new StringBuffer();
-			for(int i = 0; i < strs.size(); i++) {
-				sbf.append(strs.get(i)).append(ConfigurationConstant.EMPTY_SPACE);
+	private void postProcessing(NumberObject numberObject,
+			List<List<String>> encodings) {
+
+		if (encodings != null && encodings.size() > 0) {
+
+			List<String> allEncodings = new ArrayList<>();
+			List<String> badEncodings = new ArrayList<>();
+
+			for (List<String> strs : encodings) {
+				StringBuffer sbf = new StringBuffer();
+				for (int i = 0; i < strs.size(); i++) {
+							sbf.append(strs.get(i)).append(ConfigurationConstant.EMPTY_SPACE);
+				}
+				allEncodings.add(sbf.toString().trim());
 			}
-			allEncodings.add(sbf.toString().trim());
-		}
-		
-		if(allEncodings.size() > 1) {
-			for(String str : allEncodings) {
-				String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
-				search: {
-				if(simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
-					for(int i = 0; i < simpleStr.length()-1; i++) {
-						if(Character.isDigit(simpleStr.charAt(i))) {
-							for(String st : allEncodings) {
-								if(!Character.isDigit(st.charAt(i)) && !badEncodings.contains(st)) {
-									badEncodings.add(str);
-									break search;
+
+			if (allEncodings.size() > 1) {
+				for (String str : allEncodings) {
+					String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+					search: {
+						if (simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
+							for (int i = 0; i < simpleStr.length() - 1; i++) {
+								if (Character.isDigit(simpleStr.charAt(i))) {
+									for (String st : allEncodings) {
+										if (!Character.isDigit(st.charAt(i))&& !badEncodings.contains(st)) {
+											badEncodings.add(str);
+											break search;
+										}
+									}
 								}
 							}
 						}
 					}
 				}
-			  }
 			}
+
+			for (String badEncoding : badEncodings) {
+				allEncodings.remove(badEncoding);
+			}
+
+			numberObject.setEncodings(allEncodings);
 		}
-		
-		for(String badEncoding: badEncodings) {
-			allEncodings.remove(badEncoding);
-		}
-		
-		numberObject.setEncodings(allEncodings);
-		
 	}
 
 }

@@ -18,6 +18,7 @@ public interface ConfigurationConstant {
 	
 	public static final String NUMBER_MATCHE_REGEX = ".*\\d+.*";
 	
+	public static final String NEW_LINE = "\n";
 	
 
 }

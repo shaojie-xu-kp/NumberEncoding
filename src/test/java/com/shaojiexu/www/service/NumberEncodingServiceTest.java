@@ -29,7 +29,7 @@ public class NumberEncodingServiceTest {
 	
 	@Test
 	public void testEncodingSearch(){
-		NumberObject numberObject = new NumberObject("5047335/5-746/1-520703076185631/305390-8899856515");
+		NumberObject numberObject = new NumberObject("94983-69/900--4359/0/859813126-785-7-6-2834-576628");
 		this.encodingService.searchEncodings(numberObject);
 //		List<String> encodingsExpected = Arrays.asList("je Bo\" da", "je bo\"s 5", "neu o\"d 5");
 //		assertThat(numberObject.getEncodings(), is(encodingsExpected));

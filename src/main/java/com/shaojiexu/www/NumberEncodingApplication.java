@@ -3,6 +3,7 @@ package com.shaojiexu.www;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -15,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
+import com.shaojiexu.www.config.ConfigurationConstant;
 import com.shaojiexu.www.model.NumberObject;
 import com.shaojiexu.www.service.NumberEncodingService;
 
@@ -26,7 +28,6 @@ public class NumberEncodingApplication {
     }
     
 }
-
 @Component
 class EncodeRunner implements CommandLineRunner {
 	
@@ -52,19 +53,27 @@ class EncodeRunner implements CommandLineRunner {
 		logger.info("*******Encoding Started************");
 		
 		try {
+			
+			FileWriter encodingFileWriter = new FileWriter(encodingFilePath + File.separator +encodingFileName);
+			
 			FileInputStream fis = new FileInputStream(phoneListPath);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 			String line = null;
 			
 			while ((line = br.readLine()) != null) {
 				NumberObject numberObject = new NumberObject(line);
-				logger.info(numberObject.getNumber());
 				this.encodingService.searchEncodings(numberObject);
 				for(String str : numberObject.getEncodings()) {
+					encodingFileWriter.append(numberObject.getNumber()+ ": "+str);
+					encodingFileWriter.append(ConfigurationConstant.NEW_LINE);
 					logger.info(numberObject.getNumber()+ ": "+str);
 				}
 			}
+			
 			br.close();
+			encodingFileWriter.flush();
+			encodingFileWriter.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
