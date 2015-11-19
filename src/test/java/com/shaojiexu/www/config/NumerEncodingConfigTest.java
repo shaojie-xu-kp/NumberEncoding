@@ -2,9 +2,6 @@ package com.shaojiexu.www.config;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +20,7 @@ public class NumerEncodingConfigTest {
 	
 	@Test
 	public void mappingFileLoadTest(){
-		
-		for(Map.Entry<Integer,List<Character>> entry : NumerEncodingInitializer.numberAlpahbetMap.entrySet()) {
-			System.out.println(entry.getKey() + ":" + entry.getValue());
-		}
-		
-		for(Map.Entry<Character, List<String>> entry : NumerEncodingInitializer.dictionary.entrySet()) {
-					System.out.println(entry.getKey() + ":" + entry.getValue());
-		}
-		
+		NumerEncodingInitializer.numberAlpahbetMap.entrySet().forEach(entry -> System.out.println(entry.getKey() + ":" + entry.getValue()));
 	}
 	
 	@Test

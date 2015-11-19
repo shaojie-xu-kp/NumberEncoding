@@ -19,7 +19,7 @@ public class NumberEncodingServiceTest {
 	@Autowired
 	NumberEncodingService encodingService;
 		
-	
+	@Test
 	public void testEncoding(){
 		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("56-2"),false).contains("mir"));
 		assertTrue(this.encodingService.encodeAsWhole(NumberEncodingUtil.numberString2Number("4824"),false).contains("Torf"));
@@ -29,7 +29,7 @@ public class NumberEncodingServiceTest {
 	
 	@Test
 	public void testEncodingSearch(){
-		NumberObject numberObject = new NumberObject("94983-69/900--4359/0/859813126-785-7-6-2834-576628");
+		NumberObject numberObject = new NumberObject("4824");
 		this.encodingService.searchEncodings(numberObject);
 //		List<String> encodingsExpected = Arrays.asList("je Bo\" da", "je bo\"s 5", "neu o\"d 5");
 //		assertThat(numberObject.getEncodings(), is(encodingsExpected));

@@ -6,10 +6,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 
@@ -27,7 +28,7 @@ public class NumerEncodingInitializer {
 
 	public static Map<Integer, List<Character>> numberAlpahbetMap = new HashMap<>();
 
-	public static Map<Character, List<String>> dictionary = new HashMap<>();
+	public static Map<Character, Queue<String>> dictionary = new HashMap<>();
 
 	@Value("${number.alphabet.mapping}")
 	private String mappingFilePath;
@@ -47,27 +48,24 @@ public class NumerEncodingInitializer {
 	private void loadDictionary() {
 		
 		logger.info("Start loading the dictionary file : " + dictionaryFilePath);
-		
+		int wordCount = 0;
 		try {
 			FileInputStream fis = new FileInputStream(dictionaryFilePath);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 			String line = null;
-
 			while ((line = br.readLine()) != null) {
-				if(dictionary.containsKey(line.charAt(0))){
-					List<String> words = new ArrayList<>();
-					words.addAll(dictionary.get(line.charAt(0)));
-					words.add(line);
-					dictionary.put(line.charAt(0), words);
-				}else{
-					dictionary.put(line.charAt(0), Arrays.asList(line));
-				}
+				Queue<String> words = dictionary.containsKey(line.charAt(0)) ? dictionary.get(line.charAt(0)) : new LinkedList<>();
+				words.offer(line);
+				wordCount++;
+				dictionary.put(line.charAt(0), words);
 			}
 			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		logger.info(String.format("There are totally %d words loaded into dictionary", wordCount));
+
 		logger.info("End loading the dictionary file.");
 	}
 
@@ -84,8 +82,7 @@ public class NumerEncodingInitializer {
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
 			String line = null;
-			int numberOfLines = NumberEncodingUtil.countLines(new File(
-					mappingFilePath));
+			int numberOfLines = NumberEncodingUtil.countLines(new File(mappingFilePath));
 
 			for (int i = 0; (line = br.readLine()) != null && i < numberOfLines - 1; i++) {
 				// each block of a line between two pipes such as "J N Q"
