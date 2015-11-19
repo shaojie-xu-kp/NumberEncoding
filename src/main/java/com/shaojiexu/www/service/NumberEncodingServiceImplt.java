@@ -3,12 +3,9 @@ package com.shaojiexu.www.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.stereotype.Service;
 
@@ -25,7 +22,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	@Override
 	public List<String> lookUp(char digit) {
 
-		List<String> words = new ArrayList<String>();
+		List<String> words = new LinkedList<String>();
 		NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digit))
 								.stream()
 								.filter(element -> NumerEncodingInitializer.dictionary.get(element) != null)
@@ -48,91 +45,79 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		}
 	}
 
+	/**
+	 * encode the word as a whole one
+	 * @param number
+	 * @return
+	 */
 	private List<String> encodeAsWhole(String number) {
 		
-		char[] digits = number.toCharArray();
-		List<String> words = this.lookUp(digits[0]);
+		//wordsMap which has clean word without umlaut and value with umlaut
 		Map<String,String> wordsMap = new HashMap<String, String>();
-		Iterator<String> itr = words.iterator();
-		while(itr.hasNext()) {
-			String word = itr.next();
-			String cleanWord = NumberEncodingUtil.cleanDashAndDoubleQuote(word);
-			if(cleanWord.length() != digits.length) {
-				itr.remove();
-			}else{
-				wordsMap.put(cleanWord, word);
-			}
+
+		// filter out the word which has the same length of the input number and put them into wordsMap
+		this.lookUp(number.charAt(0)).stream()
+									 .filter(word -> NumberEncodingUtil.cleanDashAndDoubleQuote(word).length() == number.length())
+									 .forEach(word -> wordsMap.put(NumberEncodingUtil.cleanDashAndDoubleQuote(word), word));
+		
+		/*
+		 * for each position index of the number, get a set of possible mapping elements
+		 * remove the word in the wordsMap if the char at position index of word is not part of the mapping elements
+		 */
+		for(int i = 1; i < number.length(); i++) {
+			int index = i;
+			List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(number.charAt(index)));
+			wordsMap.keySet().removeIf(key -> !elements.contains(key.charAt(index)));
 		}
-		
-		Set<String> ws = new CopyOnWriteArraySet<>();
-		if (wordsMap.keySet() != null) {
-			ws.addAll(wordsMap.keySet());
-			for(String word : ws) {
-				for(int i = 1; i < word.length(); i++) {
-					List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digits[i]));
-					if(!elements.contains(word.charAt(i))) {
-						ws.remove(word);
-					}
-				}
-			}
-		}
-		
-		List<String> encodings = new ArrayList<>();
-		
-		for(String encodingKey : ws) {
-			encodings.add(wordsMap.get(encodingKey));
-		}
-		
-		return encodings;
+		return new ArrayList<String>(wordsMap.values());
 	}
 	
-
-	private List<List<String>> searchEncodings(String number, int startAt, boolean singleDigitPermited) {
-		  List<List<String>> result = new LinkedList<>();
-		  if(startAt == number.length()) {
-		    result.add(new LinkedList<String>());
-		    return result;
+	private List<List<String>> searchEncodings(String number, int initPosition, boolean singleDigitPermited) {
+		  List<List<String>> resultEncodings = new LinkedList<>();
+		  if(initPosition == number.length()) {
+			  resultEncodings.add(new LinkedList<String>());
+		    return resultEncodings;
 		  }
-		  for(int endAt = startAt + 1; endAt <= number.length(); endAt++) {
-		    List<String> words = this.encodeAsWhole(number.substring(startAt, endAt), singleDigitPermited);
+		  
+		  for(int endPosition = initPosition + 1; endPosition <= number.length(); endPosition++) {
+		    List<String> words = this.encodeAsWhole(number.substring(initPosition, endPosition), singleDigitPermited);
+		    List<List<String>> encodings = null;
 		    if(words != null && words.size() > 0) {
 		    	
-		    	List<List<String>> encodings = null;
-		    	if(words.size() == 1 && words.get(0).length() == 1){
-		    		encodings = searchEncodings(number, endAt, false);
-		    	}
-		    	else{
-		    		encodings = searchEncodings(number, endAt, true);
-		    	}
-		      for(String word: words) {
-		        for(List<String> encoding: encodings) {
-		          List<String> enc = new LinkedList<>(encoding);
-		          enc.add(0, word);
-		          result.add(enc);
-		        }
-		      }
+		    	/* to check the if previously encoded words are single digit encode
+		    	 * if yes, singleDigitPermited set to false for next recursion
+		    	 * if no , singleDigitPermited set to true for next recursion
+		    	 */
+		    	boolean singleDigitPermitedFlag = !(words.size() == 1 && words.get(0).length() == 1);
+		    	encodings = searchEncodings(number, endPosition, singleDigitPermitedFlag);
+		    	
+				for (String word : words) {
+					for (List<String> encoding : encodings) {
+						LinkedList<String> enc = new LinkedList<>(encoding);
+						enc.addFirst(word);
+						resultEncodings.add(enc);
+					}
+				}
 		    }
 		  }
-		  return result;
+		  return resultEncodings;
 		}
 
 
-	private void postProcessing(NumberObject numberObject,
-			List<List<String>> encodings) {
+	private void postProcessing(NumberObject numberObject, List<List<String>> encodings) {
 
 		if (encodings != null && encodings.size() > 0) {
 
 			List<String> allEncodings = new ArrayList<>();
 			List<String> badEncodings = new ArrayList<>();
 
-			for (List<String> strs : encodings) {
-				StringBuffer sbf = new StringBuffer();
-				for (int i = 0; i < strs.size(); i++) {
-							sbf.append(strs.get(i)).append(ConfigurationConstant.EMPTY_SPACE);
-				}
+			StringBuffer sbf = new StringBuffer();
+			encodings.forEach(strs -> {
+				strs.forEach(str -> sbf.append(str).append(ConfigurationConstant.EMPTY_SPACE));
 				allEncodings.add(sbf.toString().trim());
-			}
-
+				sbf.setLength(0);
+			});
+			
 			if (allEncodings.size() > 1) {
 				for (String str : allEncodings) {
 					String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
