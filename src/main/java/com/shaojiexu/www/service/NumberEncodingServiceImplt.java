@@ -17,8 +17,9 @@ import com.shaojiexu.www.util.NumberEncodingUtil;
 @Service
 public class NumberEncodingServiceImplt implements NumberEncodingService {
 	
-//	private static final Logger logger = LoggerFactory.getLogger(NumberEncodingServiceImplt.class);
-
+	/**
+	 * look up in the number alphabet map to find the mapping elements for each digit
+	 */
 	@Override
 	public List<String> lookUp(char digit) {
 
@@ -30,12 +31,19 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		return words;
 	}
 
+	
+	/**
+	 *	search the encodings for each number object and populate the encoding list
+	 */
 	@Override
 	public void searchEncodings(NumberObject number) {
 		List<List<String>> encodings = searchEncodings(NumberEncodingUtil.numberString2Number(number.getNumber()), 0, true);
 		this.postProcessing(number, encodings);
 	}
 	
+	/**
+	 * based on the permission of single digit encoding, find the encodings for whole number string
+	 */
 	@Override
 	public List<String> encodeAsWhole(String number, boolean singleDigitPermited) {
 		if(singleDigitPermited && number.length() == 1) {
@@ -46,7 +54,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	}
 
 	/**
-	 * encode the word as a whole one
+	 * encode the number string as a whole word
 	 * @param number
 	 * @return
 	 */
@@ -72,6 +80,19 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		return new ArrayList<String>(wordsMap.values());
 	}
 	
+	
+	/**
+	 * recursively to search the encodings
+	 * 
+	 * @param number 
+	 * 		  the input number string
+	 * @param initPosition
+	 * 		  the initial position of the string to do encoding
+	 * @param singleDigitPermited
+	 * 		  permission to do single digit encoding 
+	 *        if the previous digit has been encoded as a single digit, permission false, else permission true
+	 * @return
+	 */
 	private List<List<String>> searchEncodings(String number, int initPosition, boolean singleDigitPermited) {
 		  List<List<String>> resultEncodings = new LinkedList<>();
 		  if(initPosition == number.length()) {
@@ -81,7 +102,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		  
 		  for(int endPosition = initPosition + 1; endPosition <= number.length(); endPosition++) {
 		    List<String> words = this.encodeAsWhole(number.substring(initPosition, endPosition), singleDigitPermited);
-		    List<List<String>> encodings = null;
 		    if(words != null && words.size() > 0) {
 		    	
 		    	/* to check the if previously encoded words are single digit encode
@@ -89,27 +109,33 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		    	 * if no , singleDigitPermited set to true for next recursion
 		    	 */
 		    	boolean singleDigitPermitedFlag = !(words.size() == 1 && words.get(0).length() == 1);
-		    	encodings = searchEncodings(number, endPosition, singleDigitPermitedFlag);
+		    	List<List<String>> encodings = searchEncodings(number, endPosition, singleDigitPermitedFlag);
 		    	
-				for (String word : words) {
-					for (List<String> encoding : encodings) {
+				words.forEach(word -> {
+					encodings.forEach(encoding -> {
 						LinkedList<String> enc = new LinkedList<>(encoding);
 						enc.addFirst(word);
 						resultEncodings.add(enc);
-					}
-				}
-		    }
+					});
+				});
+			}
 		  }
 		  return resultEncodings;
 		}
 
 
+	/**
+	 * post processing for the encodings into a formatted list of string for a given number object
+	 * filter out the invalid single digit encoded encodings
+	 * populate encoding list of the number object
+	 * @param numberObject
+	 * @param encodings
+	 */
 	private void postProcessing(NumberObject numberObject, List<List<String>> encodings) {
 
 		if (encodings != null && encodings.size() > 0) {
 
 			List<String> allEncodings = new ArrayList<>();
-			List<String> badEncodings = new ArrayList<>();
 
 			StringBuffer sbf = new StringBuffer();
 			encodings.forEach(strs -> {
@@ -118,32 +144,43 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 				sbf.setLength(0);
 			});
 			
-			if (allEncodings.size() > 1) {
-				for (String str : allEncodings) {
-					String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
-					search: {
-						if (simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
-							for (int i = 0; i < simpleStr.length() - 1; i++) {
-								if (Character.isDigit(simpleStr.charAt(i))) {
-									for (String st : allEncodings) {
-										if (!Character.isDigit(st.charAt(i))&& !badEncodings.contains(st)) {
-											badEncodings.add(str);
-											break search;
-										}
+			numberObject.setEncodings(allEncodings);
+			this.removeInvalidSingleDigitedEncodings(numberObject);
+		}
+	}
+	
+	/**
+	 * for a list of all possible encodings of one number object, filter out the invalid single digit encoded encodings
+	 * if the encoding has digit inside
+	 * for the position of the digit of this encoding, check out the all the char of same position of all
+	 * if find out that the char in that position of other encodings is not digit, mean from this position, other words in the 
+	 * dictionary has been found and this encoding is invalid
+	 * @param allEncodings
+	 */
+	private void removeInvalidSingleDigitedEncodings(NumberObject numberObject) {
+
+		if (numberObject.getEncodings().size() > 1) {
+			List<String> allEncodings = numberObject.getEncodings();
+			List<String> badEncodings = new ArrayList<>();
+			allEncodings.forEach(str -> {
+				String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+				search: {
+					if (simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
+						for (int i = 0; i < simpleStr.length() - 1; i++) {
+							if (Character.isDigit(simpleStr.charAt(i))) {
+								for (String st : allEncodings) {
+									if (!Character.isDigit(st.charAt(i)) && !badEncodings.contains(st)) {
+										badEncodings.add(str);
+										break search;
 									}
 								}
 							}
 						}
 					}
 				}
-			}
-
-			for (String badEncoding : badEncodings) {
-				allEncodings.remove(badEncoding);
-			}
-
-			numberObject.setEncodings(allEncodings);
+			});
+			allEncodings.removeAll(badEncodings);
 		}
 	}
-
+	
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.List;
 
 import com.shaojiexu.www.config.ConfigurationConstant;
 
@@ -50,23 +49,9 @@ public class NumberEncodingUtil {
 	
 	/**
 	 * 
-	 * @param combos
-	 * @param arrs
-	 * @param position
-	 * @param s
+	 * @param word
 	 * @return
 	 */
-	public static List<String> recursivePermutation (List<String> combos, Object[][] arrs, int position, String s) {
-        if (position == arrs.length) {
-        	combos.add(s);
-        } else {
-            for (Object o : arrs[position]) {
-            	recursivePermutation(combos, arrs, position + 1, s + o);
-            }
-        }
-        return combos;
-    }
-	
 	public static String cleanDashAndDoubleQuote(String word){
 		
 		if(word == null) 
