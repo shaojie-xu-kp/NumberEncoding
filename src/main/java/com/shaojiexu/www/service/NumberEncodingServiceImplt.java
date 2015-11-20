@@ -2,6 +2,7 @@ package com.shaojiexu.www.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,35 +12,21 @@ import org.springframework.stereotype.Service;
 
 import com.shaojiexu.www.config.ConfigurationConstant;
 import com.shaojiexu.www.config.NumerEncodingInitializer;
-import com.shaojiexu.www.model.NumberObject;
 import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @Service
 public class NumberEncodingServiceImplt implements NumberEncodingService {
 	
 	/**
-	 * look up in the number alphabet map to find the mapping elements for each digit
+	 * entrance method to do encoding
 	 */
 	@Override
-	public List<String> lookUp(char digit) {
-
-		List<String> words = new LinkedList<String>();
-		NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digit))
-								.stream()
-								.filter(element -> NumerEncodingInitializer.dictionary.get(element) != null)
-								.forEach(element -> words.addAll(NumerEncodingInitializer.dictionary.get(element)));
-		return words;
+	public List<String> encode(String number) {
+		List<List<String>> encodings = searchEncodings(NumberEncodingUtil.cleanDashAndSlash(number), 0, true);
+		return this.postProcessing(encodings);
 	}
-
 	
-	/**
-	 *	search the encodings for each number object and populate the encoding list
-	 */
-	@Override
-	public void searchEncodings(NumberObject number) {
-		List<List<String>> encodings = searchEncodings(NumberEncodingUtil.numberString2Number(number.getNumber()), 0, true);
-		this.postProcessing(number, encodings);
-	}
+	
 	
 	/**
 	 * based on the permission of single digit encoding, find the encodings for whole number string
@@ -52,7 +39,23 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 			return this.encodeAsWhole(number);
 		}
 	}
+	
+	
 
+	/**
+	 * look up in the number alphabet map to find the mapping elements for each digit
+	 */
+	private List<String> lookUp(char digit) {
+		
+		List<String> words = new LinkedList<String>();
+		NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digit))
+		.stream()
+		.filter(element -> NumerEncodingInitializer.dictionary.get(element) != null)
+		.forEach(element -> words.addAll(NumerEncodingInitializer.dictionary.get(element)));
+		return words;
+	}
+	
+	
 	/**
 	 * encode the number string as a whole word
 	 * @param number
@@ -94,7 +97,9 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 * @return
 	 */
 	private List<List<String>> searchEncodings(String number, int initPosition, boolean singleDigitPermited) {
+		
 		  List<List<String>> resultEncodings = new LinkedList<>();
+		  
 		  if(initPosition == number.length()) {
 			  resultEncodings.add(new LinkedList<String>());
 		    return resultEncodings;
@@ -111,6 +116,9 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		    	boolean singleDigitPermitedFlag = !(words.size() == 1 && words.get(0).length() == 1);
 		    	List<List<String>> encodings = searchEncodings(number, endPosition, singleDigitPermitedFlag);
 		    	
+		    	/* for each list of encoding found in this recursion
+		    	 * push into the first position the encodings found in previous recursion
+		    	 */
 				words.forEach(word -> {
 					encodings.forEach(encoding -> {
 						LinkedList<String> enc = new LinkedList<>(encoding);
@@ -131,39 +139,42 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 * @param numberObject
 	 * @param encodings
 	 */
-	private void postProcessing(NumberObject numberObject, List<List<String>> encodings) {
+	private List<String> postProcessing(List<List<String>> encodingsList) {
 
-		if (encodings != null && encodings.size() > 0) {
+		if (encodingsList != null && encodingsList.size() > 0) {
 
 			List<String> allEncodings = new ArrayList<>();
 
 			StringBuffer sbf = new StringBuffer();
-			encodings.forEach(strs -> {
+			encodingsList.forEach(strs -> {
 				strs.forEach(str -> sbf.append(str).append(ConfigurationConstant.EMPTY_SPACE));
 				allEncodings.add(sbf.toString().trim());
 				sbf.setLength(0);
 			});
 			
-			numberObject.setEncodings(allEncodings);
-			this.removeInvalidSingleDigitedEncodings(numberObject);
+			this.removeInvalidSingleDigitedEncodings(allEncodings);
+			
+			return allEncodings;
+		}else{
+			return Collections.emptyList();
 		}
+		
 	}
 	
 	/**
-	 * for a list of all possible encodings of one number object, filter out the invalid single digit encoded encodings
+	 * for a list of all possible encodings, filter out the invalid single digit encoded encodings
 	 * if the encoding has digit inside
 	 * for the position of the digit of this encoding, check out the all the char of same position of all
 	 * if find out that the char in that position of other encodings is not digit, mean from this position, other words in the 
 	 * dictionary has been found and this encoding is invalid
 	 * @param allEncodings
 	 */
-	private void removeInvalidSingleDigitedEncodings(NumberObject numberObject) {
+	private void removeInvalidSingleDigitedEncodings( List<String> allEncodings) {
 
-		if (numberObject.getEncodings().size() > 1) {
-			List<String> allEncodings = numberObject.getEncodings();
+		if (allEncodings.size() > 1) {
 			List<String> badEncodings = new ArrayList<>();
 			allEncodings.forEach(str -> {
-				String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+				String simpleStr = NumberEncodingUtil.cleanDashAndDoubleQuoteAndEmptySpace(str);
 				search: {
 					if (simpleStr.matches(ConfigurationConstant.NUMBER_MATCHE_REGEX)) {
 						for (int i = 0; i < simpleStr.length() - 1; i++) {

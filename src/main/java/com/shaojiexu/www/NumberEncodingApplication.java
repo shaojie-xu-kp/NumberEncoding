@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
 import com.shaojiexu.www.config.ConfigurationConstant;
-import com.shaojiexu.www.model.NumberObject;
 import com.shaojiexu.www.service.NumberEncodingService;
 
 @SpringBootApplication
@@ -28,6 +28,7 @@ public class NumberEncodingApplication {
     }
     
 }
+
 @Component
 class EncodeRunner implements CommandLineRunner {
 	
@@ -61,12 +62,11 @@ class EncodeRunner implements CommandLineRunner {
 			String line = null;
 			
 			while ((line = br.readLine()) != null) {
-				NumberObject numberObject = new NumberObject(line);
-				this.encodingService.searchEncodings(numberObject);
-				for(String str : numberObject.getEncodings()) {
-					encodingFileWriter.append(numberObject.getNumber()+ ": "+str);
+				List<String> encodings = this.encodingService.encode(line);
+				for(String str : encodings) {
+					encodingFileWriter.append(line+ ": "+str);
 					encodingFileWriter.append(ConfigurationConstant.NEW_LINE);
-					logger.info(numberObject.getNumber()+ ": "+str);
+					logger.info(line+ ": "+str);
 				}
 			}
 			

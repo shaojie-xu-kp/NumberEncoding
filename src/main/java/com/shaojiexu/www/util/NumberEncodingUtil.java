@@ -38,10 +38,10 @@ public class NumberEncodingUtil {
 	 * @return
 	 * 		  return a Long which contains only digits
 	 */
-	public static String numberString2Number(String number) {
+	public static String cleanDashAndSlash(String number) {
 		
 		if(number == null) 
-			throw new IllegalArgumentException("input number string should not be null");
+			return ConfigurationConstant.EMPTY_PLACEHOLDER;
 		
 		return number.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
 					 .replace(ConfigurationConstant.SLASH, ConfigurationConstant.EMPTY_PLACEHOLDER);
@@ -50,17 +50,34 @@ public class NumberEncodingUtil {
 	/**
 	 * 
 	 * @param word
+	 * 		  the word in the dictionary might contain dash, double quote
 	 * @return
 	 */
 	public static String cleanDashAndDoubleQuote(String word){
 		
 		if(word == null) 
-			throw new IllegalArgumentException("input word string should not be null");
+			return ConfigurationConstant.EMPTY_PLACEHOLDER;
 
 		return word.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
+				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_PLACEHOLDER);
+		
+	}
+
+
+	/**
+	 * 
+	 * @param encoding
+	 * 		  the encoding might contain dash, double quote, and empty space
+	 * @return
+	 */
+	public static String cleanDashAndDoubleQuoteAndEmptySpace(String encoding) {
+		
+		if(encoding == null) 
+			return ConfigurationConstant.EMPTY_PLACEHOLDER;
+
+		return encoding.replace(ConfigurationConstant.DASH, ConfigurationConstant.EMPTY_PLACEHOLDER)
 				   .replace(ConfigurationConstant.DOUBLE_QUOTE, ConfigurationConstant.EMPTY_PLACEHOLDER)
 				   .replace(ConfigurationConstant.EMPTY_SPACE, ConfigurationConstant.EMPTY_PLACEHOLDER);
-		
 	}
 
 
