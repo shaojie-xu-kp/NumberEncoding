@@ -3,9 +3,11 @@ package com.shaojiexu.www.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.shaojiexu.www.config.ConfigurationConstant;
@@ -14,6 +16,9 @@ import com.shaojiexu.www.util.NumberEncodingUtil;
 
 @Service
 public class NumberEncodingServiceImplt implements NumberEncodingService {
+	
+	@Value("${filter.flag}")
+	private boolean filterFlag;
 	
 	/**
 	 * entrance method to do encoding
@@ -108,7 +113,9 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 				sbf.setLength(0);
 			});
 			
-			this.removeInvalidSingleDigitedEncoding(allEncodings);
+			if(filterFlag){
+				this.removeInvalidSingleDigitedEncoding(allEncodings);
+			}
 			
 			return allEncodings;
 		}else{
@@ -127,24 +134,32 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 */
 	private void removeInvalidSingleDigitedEncoding(List<String> encodings){
 		
-		List<String> badEncodings = new LinkedList<>();
+		List<String> encs = new ArrayList<>(encodings);
 		
 		if(encodings != null && encodings.size() > 0) {
-			for(String str : encodings) {
-				String cleanstr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
-				for(int i = 0; i < cleanstr.length(); i++) {
-					if(Character.isDigit(cleanstr.charAt(i))) {
-						for(String encoding : encodings) {
-							String cleanEncoding = NumberEncodingUtil.cleanDashAndDoubleQuote(encoding);
-							if(cleanEncoding.length() > i && cleanstr.substring(0, i).equals(cleanEncoding.substring(0, i)) && !Character.isDigit(cleanEncoding.charAt(i))) {
-								badEncodings.add(str);
-								break;
+			Iterator<String> itr = encodings.iterator();
+			while(itr.hasNext()) {
+				String originalEncoding = itr.next();
+				String cleanstr = NumberEncodingUtil.cleanDashAndDoubleQuote(originalEncoding);
+				boolean removeFlag = false;
+				search: {
+					for(int i = 0; i < cleanstr.length(); i++) {
+						if(Character.isDigit(cleanstr.charAt(i))) {
+							for(String str : encs) {
+								String cleanEncoding = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+								if(cleanEncoding.length() > i && cleanstr.substring(0, i).equals(cleanEncoding.substring(0, i)) && !Character.isDigit(cleanEncoding.charAt(i))) {
+									removeFlag = true;
+									break search;
+								}
 							}
 						}
 					}
 				}
+				if(removeFlag){
+					itr.remove();
+					encs.remove(originalEncoding);
+				}
 			}
-			encodings.removeAll(badEncodings);
 		}
 	}
 		

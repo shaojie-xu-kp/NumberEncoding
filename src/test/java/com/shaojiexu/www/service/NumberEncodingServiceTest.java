@@ -34,7 +34,7 @@ public class NumberEncodingServiceTest {
 	
 	@Test
 	public void testEncodingSearch(){
-		List<String> encodings = this.encodingService.encode("-885/63538");
+		List<String> encodings = this.encodingService.encode("0886/7/-59063/276-9458140");
 //		List<String> encodingsExpected = Arrays.asList("mir Tor", "Mix Tor");
 //		assertThat(encodings, is(encodingsExpected));
 		encodings.forEach(encoding -> System.out.println(encoding));
