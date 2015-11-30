@@ -3,10 +3,8 @@ package com.shaojiexu.www.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +25,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	}
 	
 	
-	
 	/**
 	 * based on the permission of single digit encoding, find the encodings for whole number string
 	 */
@@ -36,51 +33,8 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 		if(singleDigitPermited && number.length() == 1) {
 			return Arrays.asList(number);
 		}else{
-			return this.encodeAsWhole(number);
+			return NumerEncodingInitializer.decodedDictionary.get(number);
 		}
-	}
-	
-	
-
-	/**
-	 * look up in the number alphabet map to find the mapping elements for each digit
-	 */
-	private List<String> lookUp(char digit) {
-		
-		List<String> words = new LinkedList<String>();
-		NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(digit))
-		.stream()
-		.filter(element -> NumerEncodingInitializer.dictionary.get(element) != null)
-		.forEach(element -> words.addAll(NumerEncodingInitializer.dictionary.get(element)));
-		return words;
-	}
-	
-	
-	/**
-	 * encode the number string as a whole word
-	 * @param number
-	 * @return
-	 */
-	private List<String> encodeAsWhole(String number) {
-		
-		//wordsMap which has clean word without umlaut and value with umlaut
-		Map<String,String> wordsMap = new HashMap<String, String>();
-
-		// filter out the word which has the same length of the input number and put them into wordsMap
-		this.lookUp(number.charAt(0)).stream()
-									 .filter(word -> NumberEncodingUtil.cleanDashAndDoubleQuote(word).length() == number.length())
-									 .forEach(word -> wordsMap.put(NumberEncodingUtil.cleanDashAndDoubleQuote(word), word));
-		
-		/*
-		 * for each position index of the number, get a set of possible mapping elements
-		 * remove the word in the wordsMap if the char at position index of word is not part of the mapping elements
-		 */
-		for(int i = 1; i < number.length(); i++) {
-			int index = i;
-			List<Character> elements = NumerEncodingInitializer.numberAlpahbetMap.get(Character.getNumericValue(number.charAt(index)));
-			wordsMap.keySet().removeIf(key -> !elements.contains(key.charAt(index)));
-		}
-		return new ArrayList<String>(wordsMap.values());
 	}
 	
 	

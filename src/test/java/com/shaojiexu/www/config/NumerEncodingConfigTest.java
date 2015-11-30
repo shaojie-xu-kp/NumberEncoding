@@ -23,6 +23,10 @@ public class NumerEncodingConfigTest {
 	@Test
 	public void mappingFileLoadTest(){
 		NumerEncodingInitializer.numberAlpahbetMap.entrySet().forEach(entry -> System.out.println(entry.getKey() + ":" + entry.getValue()));
+		System.out.println("*******************");
+		NumerEncodingInitializer.AlpahbetNumberMap.entrySet().forEach(entry -> System.out.println(entry.getKey() + ":" + entry.getValue()));
+		System.out.println("*******************");
+		NumerEncodingInitializer.decodedDictionary.entrySet().forEach(entry -> System.out.println(entry.getKey() + ":" + entry.getValue()));
 	}
 	
 	@Test

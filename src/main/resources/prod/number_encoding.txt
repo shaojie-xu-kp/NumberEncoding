@@ -5,8 +5,8 @@
 1556/0: 1 Mai 0
 -0338: es so
 7-5: um
-/7-357653152/0677-: USA Bias ja Weib 7
 /7-357653152/0677-: USA Bias ja Reck 7
+/7-357653152/0677-: USA Bias ja Weib 7
 3/-6482482: dito 2 Tor
 2273695: 2 wusch 5
 /8-: 8
@@ -30,40 +30,40 @@
 /561: 5 in
 10: je
 176/3/: 1 bis
-584/2: alt 2
 584/2: Alf 2
+584/2: alt 2
 45-69372376//8-926-5: Fach Dur Ski oh Wim
 45-69372376//8-926-5: Fach Dur Ski Ohr im
-/205952797574385/54/58-8691: wem Zar Uhu Au Typ Amt Alp ihn
-/205952797574385/54/58-8691: wem Zar Uhu Abt so Amt Alp ihn
-/205952797574385/54/58-8691: wem Zar Uhu Akt so Amt Alp ihn
-/205952797574385/54/58-8691: wem Zar Uhu Mut so Amt Alp ihn
-/205952797574385/54/58-8691: wem Zar Uhu auf so Amt Alp ihn
 /205952797574385/54/58-8691: wem gar Uhu Au Typ Amt Alp ihn
 /205952797574385/54/58-8691: wem gar Uhu Abt so Amt Alp ihn
 /205952797574385/54/58-8691: wem gar Uhu Akt so Amt Alp ihn
-/205952797574385/54/58-8691: wem gar Uhu Mut so Amt Alp ihn
 /205952797574385/54/58-8691: wem gar Uhu auf so Amt Alp ihn
+/205952797574385/54/58-8691: wem gar Uhu Mut so Amt Alp ihn
+/205952797574385/54/58-8691: wem Zar Uhu Au Typ Amt Alp ihn
+/205952797574385/54/58-8691: wem Zar Uhu Abt so Amt Alp ihn
+/205952797574385/54/58-8691: wem Zar Uhu Akt so Amt Alp ihn
+/205952797574385/54/58-8691: wem Zar Uhu auf so Amt Alp ihn
+/205952797574385/54/58-8691: wem Zar Uhu Mut so Amt Alp ihn
 1515-7--03: Jan Au es
 /0: 0
 82-068: 8 weil
-20///6458025/: weit Alex 5
 20///6458025/: reif Alex 5
--/1-72532602030/1-96--17657626: nur As wie Wesen Zink im Kir 6
--/1-72532602030/1-96--17657626: nur As wie reden Zink im Kir 6
--/1-72532602030/1-96--17657626: Jux As wie Wesen Zink im Kir 6
+20///6458025/: weit Alex 5
 -/1-72532602030/1-96--17657626: Jux As wie reden Zink im Kir 6
+-/1-72532602030/1-96--17657626: Jux As wie Wesen Zink im Kir 6
+-/1-72532602030/1-96--17657626: nur As wie reden Zink im Kir 6
+-/1-72532602030/1-96--17657626: nur As wie Wesen Zink im Kir 6
 -/1-72532602030/1-96--17657626: Jura Sri er Eden Zink im Kir 6
--/1-72532602030/1-96--17657626: Juras wie Wesen Zink im Kir 6
 -/1-72532602030/1-96--17657626: Juras wie reden Zink im Kir 6
-1729-876: nur hob 6
+-/1-72532602030/1-96--17657626: Juras wie Wesen Zink im Kir 6
 1729-876: Jux hob 6
+1729-876: nur hob 6
 95560/3-/288/07/: 9 Mai es wo peu
 -9097-/7297: Zeh Kur zu
--9097-/7297: Zeh kurz 7
 -9097-/7297: Zeh Burg 7
-4-753168781103080: 4 Bad Nil Bonn Esel 0
+-9097-/7297: Zeh kurz 7
 4-753168781103080: 4 Bad Nil Bonn edel 0
+4-753168781103080: 4 Bad Nil Bonn Esel 0
 3879: 3 ob 9
 3879: 3 ok 9
 3879: 3 Lug
@@ -71,8 +71,8 @@
 58-7-176: 5 Punk 6
 3593/: sah 3
 /4: 4
-1959175446: 1 Zahn Kaff 6
 1959175446: 1 Hahn Kaff 6
+1959175446: 1 Zahn Kaff 6
 18//91: John
 857: lau
 58200: Mo"we 0
@@ -86,12 +86,12 @@
 -11/0: 1 je
 -27-05: 2 Bea
 10-36611: 1 es 6 in 1
-750612/531/075-3: um ein was je um 3
-750612/531/075-3: um ein was je Bad
-750612/531/075-3: um ein was neu As
 750612/531/075-3: um ein Rad je um 3
 750612/531/075-3: um ein Rad je Bad
 750612/531/075-3: um ein Rad neu As
+750612/531/075-3: um ein was je um 3
+750612/531/075-3: um ein was je Bad
+750612/531/075-3: um ein was neu As
 750612/531/075-3: um Einrad je um 3
 750612/531/075-3: um Einrad je Bad
 750612/531/075-3: um Einrad neu As
