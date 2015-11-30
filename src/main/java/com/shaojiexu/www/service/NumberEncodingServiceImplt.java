@@ -3,7 +3,6 @@ package com.shaojiexu.www.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 */
 	private List<String> postProcessing(List<List<String>> encodingsList) {
 
-		this.removeInvalidSingleDigitedEncodings(encodingsList);
+//		this.removeInvalidSingleDigitedEncodings(encodingsList);
 		
 		if (encodingsList != null && encodingsList.size() > 0) {
 
@@ -109,6 +108,7 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 				sbf.setLength(0);
 			});
 			
+			this.removeInvalidSingleDigitedEncoding(allEncodings);
 			
 			return allEncodings;
 		}else{
@@ -125,41 +125,27 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 * dictionary has been found and this encoding is invalid
 	 * @param allEncodings
 	 */
-	private void removeInvalidSingleDigitedEncodings(List<List<String>> encodingsList) {
+	private void removeInvalidSingleDigitedEncoding(List<String> encodings){
 		
-		List<List<String>> backUpEncodingList = new LinkedList<>();
-		List<List<String>> badEncodingList = new LinkedList<>();
-		backUpEncodingList.addAll(encodingsList);
+		List<String> badEncodings = new LinkedList<>();
 		
-		if(encodingsList != null && encodingsList.size() > 0) {
-			Iterator<List<String>> itr = encodingsList.iterator();
-			while(itr.hasNext()) {
-				List<String> encoding = itr.next();
-				for(int position = 0; position < encoding.size(); position++) {
-					if(NumberEncodingUtil.isNumeric(encoding.get(position))) {
-						for(List<String> enc : backUpEncodingList) {
-							if(getPrefixAtPosition(encoding, position).equals(getPrefixAtPosition(enc,position)) && !NumberEncodingUtil.isNumeric(enc.get(position))) {
-								badEncodingList.add(encoding);
+		if(encodings != null && encodings.size() > 0) {
+			for(String str : encodings) {
+				String cleanstr = NumberEncodingUtil.cleanDashAndDoubleQuote(str);
+				for(int i = 0; i < cleanstr.length(); i++) {
+					if(Character.isDigit(cleanstr.charAt(i))) {
+						for(String encoding : encodings) {
+							String cleanEncoding = NumberEncodingUtil.cleanDashAndDoubleQuote(encoding);
+							if(cleanEncoding.length() > i && cleanstr.substring(0, i).equals(cleanEncoding.substring(0, i)) && !Character.isDigit(cleanEncoding.charAt(i))) {
+								badEncodings.add(str);
+								break;
 							}
 						}
 					}
 				}
 			}
-			
-			encodingsList.removeAll(badEncodingList);
+			encodings.removeAll(badEncodings);
 		}
-		
 	}
-	
-	private String getPrefixAtPosition(List<String> encoding, int position){
 		
-		StringBuffer stb = new StringBuffer();
-		
-		for(int i = 0; i< Math.min(position, encoding.size()); i++) {
-			stb.append(encoding.get(i));
-		}
-		
-		return stb.toString();
-	}
-	
 }
