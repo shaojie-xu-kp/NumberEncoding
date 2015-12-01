@@ -100,8 +100,6 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 */
 	private List<String> postProcessing(List<List<String>> encodingsList) {
 
-//		this.removeInvalidSingleDigitedEncodings(encodingsList);
-		
 		if (encodingsList != null && encodingsList.size() > 0) {
 
 			List<String> allEncodings = new ArrayList<>();
@@ -128,8 +126,8 @@ public class NumberEncodingServiceImplt implements NumberEncodingService {
 	 * for a list of all possible encodings, filter out the invalid single digit encoded encodings
 	 * if the encoding has digit inside
 	 * for the position of the digit of this encoding, check out the all the char of same position of all
-	 * if find out that the char in that position of other encodings is not digit, mean from this position, other words in the 
-	 * dictionary has been found and this encoding is invalid
+	 * if find out that the char in that position of other encodings is not digit, and the string from 0 to position equals the current
+	 * one, meaning that the current one is not valid
 	 * @param allEncodings
 	 */
 	private void removeInvalidSingleDigitedEncoding(List<String> encodings){
